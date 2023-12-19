@@ -1,46 +1,55 @@
 <?php
-include "koneksi.php";
+include 'koneksi.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $buku_id = $_POST["buku_id"];
     $anggota_id = $_POST["anggota_id"];
     $tanggal_peminjaman = $_POST["tanggal_peminjaman"];
-    $tanggal_kembali = $_POST["tanggal_kembali"];
-    $status = $_POST["status"];
 
-    $sql = "INSERT INTO peminjaman (buku_id, anggota_id, tanggal_peminjaman, tanggal_kembali, status)
-            VALUES ('$buku_id', '$anggota_id', '$tanggal_peminjaman', '$tanggal_kembali', '$status')";
-
-    if ($conn->query($sql) === TRUE) {
-        header("Location: peminjaman.php");
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
+    $query = "INSERT INTO peminjaman (buku_id, anggota_id, tanggal_peminjaman) VALUES ('$buku_id', '$anggota_id', '$tanggal_peminjaman')"; // Ganti nama_tabel dengan nama tabel Anda
+    $conn->query($query);
+    header("Location: peminjaman.php");
 }
 ?>
-  
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Peminjaman</title>
+    <title>Tambah Peminjaman</title>
 </head>
 <body>
-    <h2>Tambah Data Peminjaman</h2>
+    <h2>Tambah Peminjaman</h2>
     <form method="post" action="">
-        Buku ID: <input type="text" name="buku_id"><br>
-        Anggota ID: <input type="text" name="anggota_id"><br>
-        Tanggal Peminjaman: <input type="date" name="tanggal_peminjaman"><br>
-        Tanggal Kembali: <input type="date" name="tanggal_kembali"><br>
-        Status: 
-        <select name="status">
-            <option value="dipinjam">Dipinjam</option>
-            <option value="kembali">Kembali</option>
+        <label>Buku ID:</label>
+        <select name="buku_id" required>
+            <?php
+            // Fetch existing buku_id values from the database and populate the dropdown
+            $result = $conn->query("SELECT buku_id FROM buku");
+            while ($row = $result->fetch_assoc()) {
+                echo "<option value='".$row['buku_id']."'>".$row['buku_id']."</option>";
+            }
+            ?>
         </select><br>
-        <input type="submit" value="Simpan">
+
+        <label>Anggota ID:</label>
+        <select name="anggota_id" required>
+            <?php
+            // Fetch existing anggota_id values from the database and populate the dropdown
+            $result = $conn->query("SELECT anggota_id FROM anggota");
+            while ($row = $result->fetch_assoc()) {
+                echo "<option value='".$row['anggota_id']."'>".$row['anggota_id']."</option>";
+            }
+            ?>
+        </select><br>
+
+        <label>Tanggal Peminjaman:</label>
+        <input type="date" name="tanggal_peminjaman" required><br>
+
+        <input type="submit" value="Tambah">
     </form>
-    <br>
-    <a href="peminjaman.php">Kembali ke Data Peminjaman</a>
+    <a href="peminjaman.php">Kembali ke Daftar Peminjaman</a>
 </body>
 </html>
